@@ -1,0 +1,12 @@
+.newslist {
+  flex: 1;
+  padding: 30px;
+}
+.newslist_card {
+  width: 100%;
+  cursor: default;
+}
+.newslist_task {
+  margin-top: 20px;
+  cursor: default;
+}

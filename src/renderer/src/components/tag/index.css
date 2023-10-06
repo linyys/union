@@ -1,0 +1,21 @@
+.tag {
+  display: inline-flex;
+  padding: 5px;
+  margin: 0 20px;
+}
+.tag_dot {
+  position: relative;
+}
+.tag_core {
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+.tag_label {
+  margin-left: 10px;
+  text-align: center;
+}

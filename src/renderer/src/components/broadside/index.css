@@ -1,0 +1,15 @@
+.broadside {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+.broadside_menu {
+  background-color: #fff;
+  width: 165px;
+  height: 100vh;
+}
+.broadside_main {
+  padding: 5px;
+  flex: 1;
+  background-color: #f7f8fa;
+}

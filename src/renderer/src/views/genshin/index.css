@@ -1,0 +1,32 @@
+.head {
+  height: 80vh;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10% 0 5%;
+}
+.btn_group {
+  margin-top: 5%;
+}
+#input_file {
+  display: none;
+  cursor: pointer;
+}
+.label_main,
+.label_small {
+  cursor: default;
+}
+.label_small {
+  font-size: 9px;
+  color: var(--color-text-3);
+}
+.label_main {
+  font-size: 15px;
+  color: var(--color-text-1);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+}

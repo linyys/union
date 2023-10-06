@@ -1,0 +1,44 @@
+.userinfo {
+  width: 40%;
+  padding: 10px;
+}
+.tag_group {
+  cursor: default;
+}
+.tag_group > * {
+  margin-left: 10px;
+}
+
+.note,
+.record {
+  margin-top: 10px;
+  margin-left: 10px;
+  cursor: default;
+}
+.arco-progress-line,
+.arco-progress-steps {
+  display: inline;
+}
+.record_head {
+  display: flex;
+  justify-content: space-between;
+}
+.record {
+  margin-top: 40px;
+}
+.progress_box {
+  margin-top: 10px;
+}
+.predownload {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  margin-top: 40px;
+  border: 2px solid rgb(var(--arcoblue-2));
+  border-radius: 5px;
+  margin-left: 10px;
+}
+.icon_group > * {
+  margin-left: 10px;
+  font-size: 16px;
+}
