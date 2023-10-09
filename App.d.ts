@@ -19,6 +19,7 @@ interface genshin_fun {
   predownload
   get_version
   open_genshin_login
+  get_predownload_url
 }
 interface webview_fun {
   open_genshin_login

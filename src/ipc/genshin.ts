@@ -6,7 +6,8 @@ let config = {
   game_path: '',
   version_time: new Date('2023-9-27').getTime(),
   card_time: '',
-  version: ''
+  version: '',
+  predownload_url: ''
 }
 const one_day = (num: number = 1): number => {
   return 86400000 * num
@@ -87,10 +88,9 @@ interface data {
   images: string
 }
 const get_all_activity = async (): Promise<Array<data>> => {
-  const res = await http_get({
-    url: 'https://bbs-api.miyoushe.com/post/wapi/getNewsList?gids=2&page_size=15&type=1',
-    encoding: undefined
-  })
+  const res = await http_get(
+    'https://bbs-api.miyoushe.com/post/wapi/getNewsList?gids=2&page_size=15&type=1'
+  )
   const { data } = JSON.parse(Buffer.concat(res).toString())
   const data_list: Array<data> = []
   data.list.map((item) => {
@@ -130,7 +130,7 @@ const get_act = async (): Promise<any> => {
   }
 }
 
-const get_cardImg = (url: string): Promise<string> => {
+const get_cardImg = async (url: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const name = url.split('/')
     const src = path.resolve('./app_data/genshin/data/') + name[name.length - 1]
@@ -159,12 +159,53 @@ const get_cardImg = (url: string): Promise<string> => {
 }
 
 // 预下载
-const predownload = (): number => {
+// 1001 可用
+// 1002 未到时间
+// 1003 未发包
+// 1004 获取包失败
+const predownload = async (): Promise<number> => {
   if (update_time() > one_day(2)) {
-    return 1
+    if (config.predownload_url == '') {
+      const url = await request_predownload_url()
+      if (url) {
+        up_config('predownload_url', url)
+        return 1001
+      } else {
+        return 1003
+      }
+    } else {
+      return 1001
+    }
   } else {
-    return 2
+    return 1002
   }
+}
+
+const request_predownload_url = async (): Promise<string> => {
+  const now_version: string = get_version()
+  // const now_version = '4.0.0'
+  const arr_str = now_version.split('.')
+  arr_str[1] = (Number(arr_str[1]) + 1).toString()
+  // arr_str[1] = Number(arr_str[1]).toString()
+  const next_version: string = arr_str.join('.')
+  const now_ver_reg = now_version.split('.').join('\\.')
+  const next_ver_reg = arr_str.join('.')
+  const reg = new RegExp(
+    `https://autopatchcn.yuanshen.com/client_app/update/hk4e_cn/18/game_${now_ver_reg}_${next_ver_reg}_hdiff_(.{16}).zip`
+  )
+  const res = await http_get(
+    `https://github.com/MAnggiarMustofa/GI-Download-Library/blob/main/Yuanshen/Client/${next_version}.md`
+  )
+  const data = Buffer.concat(res).toString()
+  const text = reg.exec(data)
+  if (text == null) {
+    return ''
+  }
+  return text[0]
+}
+
+const get_predownload_url = (): string => {
+  return config.predownload_url
 }
 
 // 版本信息
@@ -196,7 +237,7 @@ const get_version = (): string => {
 
 // }
 
-export {
+export default {
   create_config,
   read_config,
   up_config,
@@ -204,5 +245,6 @@ export {
   get_update_time,
   get_act,
   predownload,
-  get_version
+  get_version,
+  get_predownload_url
 }

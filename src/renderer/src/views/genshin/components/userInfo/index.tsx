@@ -11,6 +11,7 @@ import {
 } from '@arco-design/web-react/icon'
 import './index.css'
 import { Progress, Switch, Tag, Tooltip } from '@arco-design/web-react'
+import { useEffect, useState } from 'react'
 const Record = (): JSX.Element => {
   const time = new Date().getDate()
   return (
@@ -79,15 +80,23 @@ const Predownload = (): JSX.Element => {
 }
 
 const PredownloadInfo = (): JSX.Element => {
+  const [state, setState] = useState(1002)
+  const red = 'rgb(var(--red-6))'
+  const green = 'rgb(var(--green-6))'
+  useEffect(() => {
+    window.genshin.predownload().then((res) => {
+      setState(res)
+    })
+  }, [])
   return (
     <>
-      <Tooltip mini content="预下载时间：现在不是时候">
-        <IconClockCircle style={{ color: 'rgb(var(--red-6))' }} />
+      <Tooltip mini content={`${state !== 1002 ? 'fine' : '未到时间'}`}>
+        <IconClockCircle style={{ color: state !== 1002 ? green : red }} />
       </Tooltip>
-      <Tooltip mini content="云端连接：正常">
-        <IconCloudDownload style={{ color: 'rgb(var(--green-6))' }} />
+      <Tooltip mini content={`云端包体 ${state == 1001 ? '可用' : 'no'}`}>
+        <IconCloudDownload style={{ color: state == 1001 ? green : red }} />
       </Tooltip>
-      <Tooltip mini content="预下载包体：未检出">
+      <Tooltip mini content="本地包体：未检出">
         <IconFolder style={{ color: 'rgb(var(--red-6))' }} />
       </Tooltip>
     </>

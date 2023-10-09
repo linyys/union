@@ -1,15 +1,6 @@
 import fs from 'fs'
 import { write_json, path_start } from '../public/index'
-import {
-  create_config,
-  read_config,
-  up_config,
-  start_launcher,
-  get_update_time,
-  get_act,
-  predownload,
-  get_version
-} from './genshin'
+import genshin_api from './genshin'
 // 'D:\\demo\\electron\\union\\app_data\\config.json'
 const is_initial = (): boolean => {
   return fs.existsSync('./app_data')
@@ -26,7 +17,8 @@ const initialize = (): Promise<void> => {
         console.log(err)
         reject(err)
       })
-      create_config()
+      genshin_api
+        .create_config()
         .catch((err) => {
           reject(err)
         })
@@ -45,16 +37,6 @@ const api = {
   is_initial,
   initialize,
   start_exe
-}
-
-const genshin_api = {
-  read_config,
-  up_config,
-  start_launcher,
-  get_update_time,
-  get_act,
-  predownload,
-  get_version
 }
 
 export { api, genshin_api }

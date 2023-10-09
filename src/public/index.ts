@@ -29,20 +29,16 @@ const path_start = (path: string): void => {
     })
 }
 
-interface config {
-  url: string
-  encoding: BufferEncoding | undefined
-}
+// interface config {
+//   url: string
+// }
 
-const http_get = (config: config): Promise<readonly Uint8Array[]> => {
+const http_get = (url: string): Promise<readonly Uint8Array[]> => {
   return new Promise((resolve, reject) => {
     https
-      .get(config.url, (req) => {
+      .get(url, (req) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data: Array<any> = []
-        if (config.encoding !== undefined) {
-          req.setEncoding(config.encoding)
-        }
         req.on('data', (chunk) => {
           data.push(chunk)
         })
