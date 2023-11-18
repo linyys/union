@@ -18,6 +18,26 @@ const config_sync = async (): Promise<void> => {
   config = JSON.parse(data)
 }
 
+let up_flag = false
+const up_config = (key: string, val: string | number): void => {
+  if (up_flag) {
+    return
+  } else {
+    up_flag = true
+  }
+  config_sync().then(() => {
+    config[key] = val
+    write_json('./app_data/genshin/config.json', JSON.stringify(config))
+      .then(() => {
+        up_flag = false
+      })
+      .catch((err) => {
+        console.log(err)
+        up_flag = false
+      })
+  })
+}
+
 const create_config = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     fs.mkdir('./app_data/genshin', (err) => {
@@ -33,13 +53,6 @@ const create_config = (): Promise<void> => {
           resolve()
         })
     })
-  })
-}
-
-const up_config = (key: string, val: string | number): void => {
-  config_sync().then(() => {
-    config[key] = val
-    write_json('./app_data/genshin/config.json', JSON.stringify(config))
   })
 }
 
@@ -107,22 +120,25 @@ const get_all_activity = async (): Promise<Array<data>> => {
 const get_act = async (): Promise<any> => {
   const data = await get_all_activity()
   const card_list: Array<{ subject: string; images: string }> = []
-  const act_list: Array<{ subject: string; time: Array<string> }> = []
-  const reg = /(〓.[0-9]).*([0-9].〓)/
+  let act_list: Array<{ subject: string; time: Array<string> }> = []
+  const reg = /\d{4}\/\d{2}\/\d{2}.\d{2}:\d{2}/g
   for (let i = 0, l = data.length; i < l; i++) {
-    if (/」活动/.test(data[i].subject)) {
-      const text = reg.exec(data[i].content)
+    if (/活动/.test(data[i].subject)) {
+      const time = data[i].content.match(reg)
       act_list.push({
         subject: data[i].subject,
-        time: text ? text : ['~']
+        time: time ? [time[0], time[1]] : ['', '']
       })
-    } else if (/」祈愿/.test(data[i].subject)) {
+    } else if (/概率UP/.test(data[i].subject)) {
       const src = await get_cardImg(data[i].images)
       card_list.push({
         subject: data[i].subject,
         images: src
       })
     }
+  }
+  if (act_list.length > 4) {
+    act_list = act_list.slice(0, 4)
   }
   return {
     card_list,
@@ -204,6 +220,36 @@ const request_predownload_url = async (): Promise<string> => {
   return text[0]
 }
 
+const start_predownload = (): Promise<string> => {
+  const url = config.predownload_url
+  const str_arr = url.split('/')
+  const file_name = str_arr[str_arr.length - 1]
+  return new Promise((reslove, reject) => {
+    https.get(config.predownload_url, (res) => {
+      let data = ''
+      res.on('data', (chunk) => {
+        data += chunk
+        if (data.length > 300000) {
+          fs.writeFile(`./${file_name}`, data, { encoding: 'binary', mode: 'a+' }, (err) => {
+            if (err) {
+              console.log(err)
+              reject(err)
+            }
+          })
+        }
+        data = ''
+      })
+      res.on('end', () => {
+        if (fs.existsSync(`./${file_name}`)) {
+          reslove('ok')
+        } else {
+          reject('err')
+        }
+      })
+    })
+  })
+}
+
 const get_predownload_url = (): string => {
   return config.predownload_url
 }
@@ -246,5 +292,6 @@ export default {
   get_act,
   predownload,
   get_version,
-  get_predownload_url
+  get_predownload_url,
+  start_predownload
 }

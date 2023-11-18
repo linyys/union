@@ -101,7 +101,7 @@ const Genshin = (): JSX.Element => {
               window.api.start_exe(configProps.game_path)
               setTimeout(() => {
                 setLoading(false)
-              }, 5000)
+              }, 10000)
             }}
             size="large"
             loading={is_loading}

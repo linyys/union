@@ -27,12 +27,11 @@ const NewsList = (): JSX.Element => {
     const node_arr: Array<any> = []
     const date: number = new Date().getTime()
     ActList.act_list.map((item, index) => {
-      let time = item.time[0]
-      if (time.length > 8) {
-        const reg = /\d{4}\/\d{2}\/\d{2}/g
-        const end_time = time.match(reg)
-        if (end_time == null) return
-        const end_time_c = new Date(end_time[1]).getTime()
+      const start_time = item.time[0]
+      const end_time = item.time[1]
+      const time = `${start_time} ~ ${end_time}`
+      if (start_time.length > 2) {
+        const end_time_c = new Date(end_time).getTime()
         let color
         let dot_color
         if (date > end_time_c) {
@@ -41,7 +40,6 @@ const NewsList = (): JSX.Element => {
         } else if (end_time_c - date < 86400000 * 2) {
           dot_color = '#F7BA1E'
         }
-        time = time.slice(1, time.length - 1)
         node_arr.push(
           <TimelineItem
             dotColor={dot_color}
